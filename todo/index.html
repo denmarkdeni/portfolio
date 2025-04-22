@@ -1,0 +1,161 @@
+<!-- todo/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deni To-Do </title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .todo-input {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 0.6rem 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    li.done {
+      text-decoration: line-through;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .actions button {
+      margin-left: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #888;
+      font-size: 1rem;
+    }
+
+    .actions button:hover {
+      color: #000;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Deni To-Do List</h1>
+    <div class="todo-input">
+      <input type="text" id="taskInput" placeholder="Add a new task..." />
+      <button onclick="addTask()">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const taskList = document.getElementById("taskList");
+
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function renderTasks() {
+      taskList.innerHTML = "";
+      tasks.forEach((task, index) => {
+        const li = document.createElement("li");
+        li.className = task.done ? "done" : "";
+        li.innerHTML = `
+          <span onclick="toggleTask(${index})">${task.text}</span>
+          <div class="actions">
+            <button onclick="deleteTask(${index})">❌</button>
+          </div>
+        `;
+        taskList.appendChild(li);
+      });
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text) {
+        tasks.push({ text, done: false });
+        updateLocalStorage();
+        renderTasks();
+        taskInput.value = "";
+      }
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      updateLocalStorage();
+      renderTasks();
+    }
+
+    function toggleTask(index) {
+      tasks[index].done = !tasks[index].done;
+      updateLocalStorage();
+      renderTasks();
+    }
+
+    function updateLocalStorage() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
